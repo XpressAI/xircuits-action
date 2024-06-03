@@ -45,7 +45,7 @@ runs:
         uv-venv: ".venv"
     - name: "Install Xircuits"
       shell: 'bash'
-      run: "uv pip install xircuits$INPUT_XIRCUITS_VERSION && echo xircuits$INPUT_XIRCUITS_VERSION >> requirements.txt"
+      run: "uv pip install setuptools xircuits$INPUT_XIRCUITS_VERSION && echo xircuits$INPUT_XIRCUITS_VERSION >> requirements.txt"
       env:
         INPUT_XIRCUITS_VERSION: ${{inputs.xircuits_version}}
     - name: 'Compile collected files'

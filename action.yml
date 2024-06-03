@@ -63,6 +63,14 @@ runs:
     - name: 'Collect dependencies into top-level requirements.txt file'
       shell: 'bash'
       run: |
-        while read -r f; do 
-          test -f $f && tee < $f -a requirements.txt; 
-        done < $HOME/.requirements-files && sort requirements.txt | uniq > requirements.txt
+        while read -r f; do
+          echo "checking if $f exists";
+          if [ -f $f ]; then
+            echo "Adding $f to requirement.txt"
+            tee < $f -a requirements.txt;
+          fi
+        done < $HOME/.requirements-files;
+        echo "Removing duplicates from requirements.txt"
+        sort requirements.txt | uniq > requirements.txt
+        echo "Resulting file:"
+        cat requirements.txt

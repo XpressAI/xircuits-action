@@ -58,7 +58,7 @@ runs:
       shell: 'bash'
       run: |
         while read -r f; do
-          jq -r '[.layers.[].models.[].extras?.path | strings] | unique | .[] | split("/") | .[:-1] | join("/") | . +"/requirements.txt"' $f >> $HOME/.requirements-files; 
+          jq -r '[.layers[].models[].extras?.path | strings] | unique[] | split("/")[:-1] | join("/") | . +"/requirements.txt"' $f >> $HOME/.requirements-files; 
         done < $HOME/.xircuits-files
     - name: 'Collect dependencies into top-level requirements.txt file'
       shell: 'bash'

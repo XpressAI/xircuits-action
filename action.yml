@@ -45,7 +45,9 @@ runs:
         uv-venv: ".venv"
     - name: "Install Xircuits"
       shell: 'bash'
-      run: "uv pip install setuptools xircuits$INPUT_XIRCUITS_VERSION && echo xircuits$INPUT_XIRCUITS_VERSION >> requirements.txt"
+      run: |
+        uv pip install setuptools xircuits$INPUT_XIRCUITS_VERSION
+        echo xircuits$INPUT_XIRCUITS_VERSION | uv pip compile - -o requirements.txt
       env:
         INPUT_XIRCUITS_VERSION: ${{inputs.xircuits_version}}
     - name: 'Compile collected files'
@@ -64,13 +66,9 @@ runs:
       shell: 'bash'
       run: |
         while read -r f; do
-          echo "checking if $f exists";
-          if [ -f $f ]; then
-            echo "Adding $f to requirement.txt"
-            tee < $f -a requirements.txt;
+          if [ -f $f ]; then 
+            uv pip compile $f -o requirements.txt            
           fi
         done < $HOME/.requirements-files;
-        echo "Removing duplicates from requirements.txt"
-        sort requirements.txt | uniq > requirements.txt
         echo "Resulting file:"
         cat requirements.txt

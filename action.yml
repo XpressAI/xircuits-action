@@ -52,7 +52,7 @@ runs:
       shell: 'bash'
       run: |
         while read -r f; do 
-          echo "Compiling $f" && xircuits compile $f ${f%.*}; 
+          echo "Compiling $f" && xircuits compile $f ${f%.*}.py; 
         done < $HOME/.xircuits-files
     - name: 'Collect places to look for requirements.txt files'
       shell: 'bash'

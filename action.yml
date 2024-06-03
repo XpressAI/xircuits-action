@@ -20,7 +20,7 @@ runs:
     - if: ${{ inputs.files != ''}}
       name: 'Collect given files'
       shell: 'bash'
-      run: 'for f in $INPUT_FILES; do echo $f >> $HOME/.xircuits-files; done'
+      run: 'for f in $INPUT_FILES; do echo $f && echo $f >> $HOME/.xircuits-files; done'
     - if: ${{ inputs.pattern != '' }}
       name: 'Collect files matching pattern'
       shell: 'bash'

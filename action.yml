@@ -71,8 +71,9 @@ runs:
     - name: 'Collect dependencies into top-level requirements.txt file'
       shell: 'bash'
       run: |
+        touch requirements.txt;
         while read -r f; do
           if [ -f $f ]; then 
-            uv pip compile $f -o requirements.txt            
+            cat requirements.txt $f | uv pip compile - -o requirements.txt            
           fi
         done < $HOME/.requirements-files;

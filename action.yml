@@ -20,15 +20,15 @@ runs:
     - if: ${{ inputs.files != ''}}
       name: 'Collect given files'
       shell: 'bash'
-      run: 'for f in $INPUT_FILES; do echo $f >> .xircuits-files; done'
+      run: 'for f in $INPUT_FILES; do echo $f >> $HOME/.xircuits-files; done'
     - if: ${{ inputs.pattern != '' }}
       name: 'Collect files matching pattern'
       shell: 'bash'
-      run: 'find . -name $INPUT_PATTERN >> .xircuits-files; done'
+      run: 'find . -name $INPUT_PATTERN >> $HOME/.xircuits-files; done'
     - if: ${{ inputs.directories != '' }}
       name: 'Collect files in given directories'
       shell: 'bash'
-      run: "for d in $INPUT_DIRECTORIES; do find $d -name '*.xircuits' >> .xircuits-files; done"
+      run: "for d in $INPUT_DIRECTORIES; do find $d -name '*.xircuits' >> $HOME/.xircuits-files; done"
     - name: "Setup Python"
       uses: actions/setup-python@v4
       with:
@@ -42,10 +42,10 @@ runs:
       run: "uv pip install xircuits$INPUT_XIRCUITS_VERSION && echo xircuits$INPUT_XIRCUITS_VERSION >> requirements.txt"
     - name: 'Compile collected files'
       shell: 'bash'
-      run: 'while read -r f; do echo "Compiling $f" && xircuits compile $f ${f%.*}; done < .xircuits-files'
+      run: 'while read -r f; do echo "Compiling $f" && xircuits compile $f ${f%.*}; done < $HOME/.xircuits-files'
     - name: 'Collect places to look for requirements.txt files'
       shell: 'bash'
-      run: while read -r f; do jq -r '[.layers.[].models.[].extras?.path | strings] | unique | .[] | split("/") | .[:-1] | join("/") | . +"/requirements.txt"' $f >> .requirements-files; done < .xircuits-files
+      run: while read -r f; do jq -r '[.layers.[].models.[].extras?.path | strings] | unique | .[] | split("/") | .[:-1] | join("/") | . +"/requirements.txt"' $f >> $HOME/.requirements-files; done < $HOME/.xircuits-files
     - name: 'Collect dependencies into top-level requirements.txt file'
       shell: 'bash'
-      run: 'while read -r f; do test -f $f && tee < $f -a requirements.txt; done < .requirements-files && sort requirements.txt | uniq > requirements.txt'
+      run: 'while read -r f; do test -f $f && tee < $f -a requirements.txt; done < $HOME/.requirements-files && sort requirements.txt | uniq > requirements.txt'

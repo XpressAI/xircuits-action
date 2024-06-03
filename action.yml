@@ -34,7 +34,7 @@ runs:
       with:
         python-version: "3.11"
     - name: "Setup UV"
-      uses: yezzz123/setup-uv@v4
+      uses: yezz123/setup-uv@v4
       with:
         uv-venv: ".venv"
     - name: "Install Xircuits"

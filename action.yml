@@ -42,10 +42,10 @@ runs:
       run: "uv pip install xircuits$INPUTS_XRCUITS_VERSION && echo xircuits$INPUTS_XRCUITS_VERSION >> requirements.txt"
     - name: 'Compile collected files'
       shell: 'bash'
-      run: 'read -r f; do echo "Compiling $f" && xircuits compile $f ${f%.*}; done < /tmp/filelist'
+      run: 'while read -r f; do echo "Compiling $f" && xircuits compile $f ${f%.*}; done < /tmp/filelist'
     - name: 'Collect places to look for requirements.txt files'
       shell: 'bash'
-      run: read -r f; do jq -r '[.layers.[].models.[].extras?.path | strings] | unique | .[] | split("/") | .[:-1] | join("/") | . +"/requirements.txt"' $f >> /tmp/req_list.txt; done < /tmp/filelist
+      run: while read -r f; do jq -r '[.layers.[].models.[].extras?.path | strings] | unique | .[] | split("/") | .[:-1] | join("/") | . +"/requirements.txt"' $f >> /tmp/req_list.txt; done < /tmp/filelist
     - name: 'Collect dependencies into top-level requirements.txt file'
       shell: 'bash'
-      run: 'read -r f; do test -f $f && tee < $f -a requirements.txt; done < /tmp/req_list.txt && sort requirements.txt | uniq > requirements.txt'
+      run: 'while read -r f; do test -f $f && tee < $f -a requirements.txt; done < /tmp/req_list.txt && sort requirements.txt | uniq > requirements.txt'

@@ -1,0 +1,51 @@
+name: 'Xircuits Compilation'
+description: 'Compiles the given Xircuits files and creates a requirements.txt file to run them'
+author: 'Xpress AI'
+branding:
+  icon: 'grid'
+  color: 'blue'
+inputs:
+  files:
+    description: 'List of files to compile (e.g. "File1.xircuits File2.xircuits foo/bar/baz/File3.xircuits")'
+  pattern:
+    description: 'Glob pattern of files to compile (e.g. "*.xircuits")'
+  directories:
+    description: 'Directories containing Xircuits files to compile (e.g. "xai_components/xai_custom other_dir")'
+  xircuits_version:
+    description: 'Xircuits version to use for compilation (e.g. "==1.10.1"). Default is to use the latest version. '
+    default: ''
+runs:
+  using: 'composite'
+  steps:
+    - if: ${{ inputs.files != ''}}
+      name: 'Collect given files'
+      shell: 'bash'
+      run: 'for f in $INPUTS_FILES; do echo $f >> /tmp/filelist; done'
+    - if: ${{ inputs.pattern != '' }}
+      name: 'Collect files matching pattern'
+      shell: 'bash'
+      run: 'find . -name $INPUTS_PATTERN >> /tmp/filelist; done'
+    - if: ${{ inputs.directories != '' }}
+      name: 'Collect files in given directories'
+      shell: 'bash'
+      run: "for d in $INPUTS_DIRECTORIES; do find $d -name '*.xircuits' >> /tmp/filelist; done"
+    - name: "Setup Python"
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    - name: "Setup UV"
+      uses: yezzz123/setup-uv@v4
+      with:
+        uv-venv: ".venv"
+    - name: "Install Xircuits"
+      shell: 'bash'
+      run: "uv pip install xircuits$INPUTS_XRCUITS_VERSION && echo xircuits$INPUTS_XRCUITS_VERSION >> requirements.txt"
+    - name: 'Compile collected files'
+      shell: 'bash'
+      run: 'read -r f; do echo "Compiling $f" && xircuits compile $f ${f%.*}; done < /tmp/filelist'
+    - name: 'Collect places to look for requirements.txt files'
+      shell: 'bash'
+      run: read -r f; do jq -r '[.layers.[].models.[].extras?.path | strings] | unique | .[] | split("/") | .[:-1] | join("/") | . +"/requirements.txt"' $f >> /tmp/req_list.txt; done < /tmp/filelist
+    - name: 'Collect dependencies into top-level requirements.txt file'
+      shell: 'bash'
+      run: 'read -r f; do test -f $f && tee < $f -a requirements.txt; done < /tmp/req_list.txt && sort requirements.txt | uniq > requirements.txt'

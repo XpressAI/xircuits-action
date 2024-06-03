@@ -20,15 +20,15 @@ runs:
     - if: ${{ inputs.files != ''}}
       name: 'Collect given files'
       shell: 'bash'
-      run: 'for f in $INPUTS_FILES; do echo $f >> /tmp/filelist; done'
+      run: 'for f in $INPUT_FILES; do echo $f >> /tmp/filelist; done'
     - if: ${{ inputs.pattern != '' }}
       name: 'Collect files matching pattern'
       shell: 'bash'
-      run: 'find . -name $INPUTS_PATTERN >> /tmp/filelist; done'
+      run: 'find . -name $INPUT_PATTERN >> /tmp/filelist; done'
     - if: ${{ inputs.directories != '' }}
       name: 'Collect files in given directories'
       shell: 'bash'
-      run: "for d in $INPUTS_DIRECTORIES; do find $d -name '*.xircuits' >> /tmp/filelist; done"
+      run: "for d in $INPUT_DIRECTORIES; do find $d -name '*.xircuits' >> /tmp/filelist; done"
     - name: "Setup Python"
       uses: actions/setup-python@v4
       with:

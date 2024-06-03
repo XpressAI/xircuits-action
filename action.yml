@@ -39,7 +39,7 @@ runs:
         uv-venv: ".venv"
     - name: "Install Xircuits"
       shell: 'bash'
-      run: "uv pip install xircuits$INPUTS_XRCUITS_VERSION && echo xircuits$INPUTS_XRCUITS_VERSION >> requirements.txt"
+      run: "uv pip install xircuits$INPUT_XIRCUITS_VERSION && echo xircuits$INPUT_XIRCUITS_VERSION >> requirements.txt"
     - name: 'Compile collected files'
       shell: 'bash'
       run: 'while read -r f; do echo "Compiling $f" && xircuits compile $f ${f%.*}; done < /tmp/filelist'

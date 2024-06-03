@@ -50,10 +50,19 @@ runs:
         INPUT_XIRCUITS_VERSION: ${{inputs.xircuits_version}}
     - name: 'Compile collected files'
       shell: 'bash'
-      run: 'while read -r f; do echo "Compiling $f" && xircuits compile $f ${f%.*}; done < $HOME/.xircuits-files'
+      run: |
+        while read -r f; do 
+          echo "Compiling $f" && xircuits compile $f ${f%.*}; 
+        done < $HOME/.xircuits-files
     - name: 'Collect places to look for requirements.txt files'
       shell: 'bash'
-      run: while read -r f; do jq -r '[.layers.[].models.[].extras?.path | strings] | unique | .[] | split("/") | .[:-1] | join("/") | . +"/requirements.txt"' $f >> $HOME/.requirements-files; done < $HOME/.xircuits-files
+      run: |
+        while read -r f; do
+          jq -r '[.layers.[].models.[].extras?.path | strings] | unique | .[] | split("/") | .[:-1] | join("/") | . +"/requirements.txt"' $f >> $HOME/.requirements-files; 
+        done < $HOME/.xircuits-files
     - name: 'Collect dependencies into top-level requirements.txt file'
       shell: 'bash'
-      run: 'while read -r f; do test -f $f && tee < $f -a requirements.txt; done < $HOME/.requirements-files && sort requirements.txt | uniq > requirements.txt'
+      run: |
+        while read -r f; 
+          do test -f $f && tee < $f -a requirements.txt; 
+        done < $HOME/.requirements-files && sort requirements.txt | uniq > requirements.txt'

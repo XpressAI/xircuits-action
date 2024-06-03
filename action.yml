@@ -20,19 +20,26 @@ runs:
     - if: ${{ inputs.files != ''}}
       name: 'Collect given files'
       shell: 'bash'
-      run: 'for f in $INPUT_FILES; do echo $f >> $HOME/.xircuits-files; done'
+      run: |
+        for f in $INPUT_FILES; do 
+          echo $f >> $HOME/.xircuits-files; 
+        done
       env:
         INPUT_FILES: ${{inputs.files}}
     - if: ${{ inputs.pattern != '' }}
       name: 'Collect files matching pattern'
       shell: 'bash'
-      run: 'find . -name $INPUT_PATTERN >> $HOME/.xircuits-files; done'
+      run: |
+        find . -name $INPUT_PATTERN >> $HOME/.xircuits-files; done
       env:
         INPUT_PATTERN: ${{inputs.pattern }}
     - if: ${{ inputs.directories != '' }}
       name: 'Collect files in given directories'
       shell: 'bash'
-      run: "for d in $INPUT_DIRECTORIES; do find $d -name '*.xircuits' >> $HOME/.xircuits-files; done"
+      run: |
+        for d in $INPUT_DIRECTORIES; do
+          find $d -name '*.xircuits' >> $HOME/.xircuits-files;
+        done
       env:
         INPUT_DIRECTORIES: ${{inputs.directories}}
     - name: "Setup Python"
@@ -47,7 +54,6 @@ runs:
       shell: 'bash'
       run: |
         uv pip install setuptools xircuits$INPUT_XIRCUITS_VERSION
-        echo xircuits$INPUT_XIRCUITS_VERSION | uv pip compile - -o requirements.txt
       env:
         INPUT_XIRCUITS_VERSION: ${{inputs.xircuits_version}}
     - name: 'Compile collected files'
@@ -70,5 +76,3 @@ runs:
             uv pip compile $f -o requirements.txt            
           fi
         done < $HOME/.requirements-files;
-        echo "Resulting file:"
-        cat requirements.txt

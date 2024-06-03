@@ -63,6 +63,6 @@ runs:
     - name: 'Collect dependencies into top-level requirements.txt file'
       shell: 'bash'
       run: |
-        while read -r f; 
-          do test -f $f && tee < $f -a requirements.txt; 
-        done < $HOME/.requirements-files && sort requirements.txt | uniq > requirements.txt'
+        while read -r f; do 
+          test -f $f && tee < $f -a requirements.txt; 
+        done < $HOME/.requirements-files && sort requirements.txt | uniq > requirements.txt
